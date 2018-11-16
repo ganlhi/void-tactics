@@ -6,46 +6,66 @@ public class Ship_Vector : MonoBehaviour
     #region Private variables
 
     private Vector3 startPos;
+    private Vector3 endPos;
     private Ship_Movement movement;
     private LineRenderer lineRenderer;
-    private GameObject lineWrapper;
+    private LineRenderer lineRendererFuture;
 
     [SerializeField]
     private Material material;
 
     [SerializeField]
-    private bool IsFuture;
+    private Material materialFuture;
 
     #endregion Private variables
+
+    #region Public methods
+
+    public void OnTurnStart()
+    {
+        startPos = transform.position;
+        endPos = startPos + movement.Velocity;
+
+        lineRenderer.SetPosition(0, startPos);
+        lineRenderer.SetPosition(1, endPos);
+
+        lineRendererFuture.SetPosition(0, endPos);
+        lineRendererFuture.SetPosition(1, endPos + movement.FutureVelocity);
+    }
+
+    #endregion Public methods
+
+    #region Private methods
+
+    private LineRenderer CreateRenderer(bool isFuture)
+    {
+        var lineWrapper = new GameObject(isFuture ? "VectorFuture" : "Vector");
+        lineWrapper.transform.parent = transform;
+
+        var lr = lineWrapper.AddComponent<LineRenderer>();
+        lr.material = isFuture ? materialFuture : material;
+        lr.positionCount = 2;
+        lr.widthMultiplier = .05f;
+
+        return lr;
+    }
+
+    #endregion Private methods
 
     #region Unity callbacks
 
     private void Start()
     {
         movement = GetComponent<Ship_Movement>();
-        startPos = transform.position;
+        lineRenderer = CreateRenderer(false);
+        lineRendererFuture = CreateRenderer(true);
 
-        lineWrapper = new GameObject(IsFuture ? "VectorFuture" : "Vector");
-        lineWrapper.transform.parent = transform;
-
-        lineRenderer = lineWrapper.AddComponent<LineRenderer>();
-        lineRenderer.material = material;
-        lineRenderer.positionCount = 2;
-        lineRenderer.widthMultiplier = .05f;
+        OnTurnStart();
     }
 
     private void Update()
     {
-        if (IsFuture)
-        {
-            lineRenderer.SetPosition(0, startPos + movement.Velocity);
-            lineRenderer.SetPosition(1, startPos + movement.Velocity + movement.FutureVelocity);
-        }
-        else
-        {
-            lineRenderer.SetPosition(0, startPos);
-            lineRenderer.SetPosition(1, startPos + movement.Velocity);
-        }
+        lineRendererFuture.SetPosition(1, endPos + movement.FutureVelocity);
     }
 
     #endregion Unity callbacks

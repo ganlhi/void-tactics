@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 
-public class Ship_Identity : MonoBehaviour
+public class Ship_Data : MonoBehaviour
 {
     #region Public variables
 
-    public string Name;
+    public Ship Data;
 
     #endregion Public variables
-
 }
