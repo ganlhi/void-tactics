@@ -34,3 +34,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Void Tactics/Assets/Photon/PhotonUnityNetworking/Resources/PhotonServerSettings.asset.meta
+Void Tactics/Assets/Photon/PhotonUnityNetworking/Resources/PhotonServerSettings.asset
