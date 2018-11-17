@@ -1,5 +1,6 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,9 +11,30 @@ public class PlayersManager : MonoBehaviourPunCallbacks
     #region Private variables
 
     private Dictionary<int, bool> playersReady = new Dictionary<int, bool>();
+    private bool isTurnRunning = false;
 
     [SerializeField]
     private BoolGameEvent runningTurnEvent;
+
+    [SerializeField]
+    private IntGameEvent nextTurnEvent;
+
+    [SerializeField]
+    private IntVariable currentTurn;
+
+    [SerializeField]
+    private IntVariable turnDuration;
+
+    [SerializeField]
+    private IntVariable speedFactor;
+
+    private int currentTurnDuration
+    {
+        get
+        {
+            return turnDuration / speedFactor;
+        }
+    }
 
     #endregion Private variables
 
@@ -50,8 +72,40 @@ public class PlayersManager : MonoBehaviourPunCallbacks
 
         if (playersReady.Values.All(ready => ready))
         {
-            runningTurnEvent.Raise(true);
+            isTurnRunning = !isTurnRunning;
+            photonView.RPC("RPC_RunTurn", RpcTarget.All, isTurnRunning);
         }
+    }
+
+    [PunRPC]
+    private void RPC_RunTurn(bool run)
+    {
+        runningTurnEvent.Raise(run);
+        if (run)
+        {
+            StartCoroutine("WaitTurnEnd");
+        }
+        else
+        {
+            currentTurn.Value++;
+            nextTurnEvent.Raise(currentTurn.Value);
+        }
+    }
+
+    private IEnumerator WaitTurnEnd()
+    {
+        OnPlayerReady(false);
+
+        var duration = currentTurnDuration + .5f;
+        var elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        OnPlayerReady(true);
     }
 
     #endregion Private methods
