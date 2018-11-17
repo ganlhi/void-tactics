@@ -17,6 +17,9 @@ public class Ship_Vector : MonoBehaviour
     [SerializeField]
     private Material materialFuture;
 
+    [SerializeField]
+    private float lineWidth = .05f;
+
     #endregion Private variables
 
     #region Public methods
@@ -45,7 +48,7 @@ public class Ship_Vector : MonoBehaviour
         var lr = lineWrapper.AddComponent<LineRenderer>();
         lr.material = isFuture ? materialFuture : material;
         lr.positionCount = 2;
-        lr.widthMultiplier = .05f;
+        lr.widthMultiplier = lineWidth;
 
         return lr;
     }
