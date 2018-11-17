@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
-public class PlayersManager : MonoBehaviourPunCallbacks
+public class TurnManager : MonoBehaviourPunCallbacks
 {
     #region Private variables
 

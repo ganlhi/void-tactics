@@ -506,7 +506,7 @@ GameObject:
   - component: {fileID: 256649354}
   - component: {fileID: 256649356}
   m_Layer: 0
-  m_Name: PlayersManager
+  m_Name: TurnManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,6 +524,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runningTurnEvent: {fileID: 11400000, guid: 8b2edebc8e7f57d48be6797d966cd0b9, type: 2}
+  nextTurnEvent: {fileID: 11400000, guid: 4f40485f4d7292d4e94fa8ce60671a0e, type: 2}
+  currentTurn: {fileID: 11400000, guid: 2fd9a08d4489fe04da80eeff83913a24, type: 2}
+  turnDuration: {fileID: 11400000, guid: 57228cca96af35645a37a1ee856069af, type: 2}
+  speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
 --- !u!4 &256649355
 Transform:
   m_ObjectHideFlags: 0
