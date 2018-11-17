@@ -502,6 +502,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 256649355}
+  - component: {fileID: 256649357}
   - component: {fileID: 256649354}
   - component: {fileID: 256649356}
   m_Layer: 0
@@ -522,6 +523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3440b8b21d3d445bbd0bda6a0cac04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runningTurnEvent: {fileID: 11400000, guid: 8b2edebc8e7f57d48be6797d966cd0b9, type: 2}
 --- !u!4 &256649355
 Transform:
   m_ObjectHideFlags: 0
@@ -571,6 +573,27 @@ MonoBehaviour:
     m_TypeName: BoolUnityEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   _debugValue: 0
+--- !u!114 &256649357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 256649353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 1
+  InstantiationId: 1
+  isRuntimeInstantiated: 0
 --- !u!1 &330428162
 GameObject:
   m_ObjectHideFlags: 0
