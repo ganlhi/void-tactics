@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Vdev.Messaging;
 
+[RequireComponent(typeof(MessageAutoSubscriber))]
 public class Ship_Movement : MonoBehaviour
 {
     #region Private variables
@@ -36,6 +38,7 @@ public class Ship_Movement : MonoBehaviour
 
     #region Public Methods
 
+    [MessageHandler(typeof(MessageBus.NextTurn))]
     public void OnTurnStart()
     {
         Thrust = 0;
@@ -47,9 +50,12 @@ public class Ship_Movement : MonoBehaviour
         marker.SetActive(true);
     }
 
+    [MessageHandler(typeof(MessageBus.RunningTurn))]
     public void OnTurnRunning(bool running)
     {
+        Debug.Log("SHIP: " + gameObject.name);
         applyPlotting = false;
+
         if (running)
         {
             StartCoroutine(MakeMove());
@@ -91,6 +97,7 @@ public class Ship_Movement : MonoBehaviour
         marker = new GameObject(gameObject.name + " [M]");
 
         var model = Instantiate(transform.Find("Model"), marker.transform);
+        model.transform.localScale = new Vector3(.8f, .8f, .8f);
         foreach (var mr in model.GetComponentsInChildren<MeshRenderer>())
         {
             mr.material.color = new Color(.5f, .5f, .5f, .5f);
@@ -104,9 +111,7 @@ public class Ship_Movement : MonoBehaviour
     private void Awake()
     {
         CreateMarker();
-        Velocity = transform.forward * 3;
         OnTurnStart();
-        PlannedRotation = Quaternion.Euler(90, 0, 0);
     }
 
     private void Update()

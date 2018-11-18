@@ -8,7 +8,7 @@ public class Ship
     public int MaxYaw;
     public int MaxRoll;
     public float MaxThrust;
-    public string Owner;
+    public int Owner;
 
     #endregion Public variables
 }

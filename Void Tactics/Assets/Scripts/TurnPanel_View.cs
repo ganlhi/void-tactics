@@ -1,7 +1,9 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Vdev.Messaging;
 
+[RequireComponent(typeof(MessageAutoSubscriber))]
 public class TurnPanel_View : MonoBehaviour
 {
     #region Editor customization
@@ -19,14 +21,21 @@ public class TurnPanel_View : MonoBehaviour
 
     #region Public methods
 
+    [MessageHandler(typeof(MessageBus.NextTurn))]
     public void UpdateNumber()
     {
         text.text = currentTurn.Value.ToString();
     }
 
+    [MessageHandler(typeof(MessageBus.RunningTurn))]
     public void UpdateButton(bool running)
     {
         button.interactable = !running;
+    }
+
+    public void SetReady()
+    {
+        MessageBus.PlayerReady.Broadcast(true);
     }
 
     #endregion Public methods

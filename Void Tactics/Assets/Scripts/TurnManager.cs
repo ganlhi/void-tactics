@@ -4,20 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Vdev.Messaging;
 
-[RequireComponent(typeof(PhotonView))]
+[RequireComponent(typeof(PhotonView)), RequireComponent(typeof(MessageAutoSubscriber))]
 public class TurnManager : MonoBehaviourPunCallbacks
 {
     #region Private variables
 
     private Dictionary<int, bool> playersReady = new Dictionary<int, bool>();
     private bool isTurnRunning = false;
-
-    [SerializeField]
-    private BoolGameEvent runningTurnEvent;
-
-    [SerializeField]
-    private IntGameEvent nextTurnEvent;
 
     [SerializeField]
     private IntVariable currentTurn;
@@ -38,17 +33,14 @@ public class TurnManager : MonoBehaviourPunCallbacks
 
     #endregion Private variables
 
-    #region Public methods
+    #region Private methods
 
-    public void OnPlayerReady(bool ready)
+    [MessageHandler(typeof(MessageBus.PlayerReady))]
+    private void OnPlayerReady(bool ready)
     {
         Debug.Log("Local Player Ready: " + ready);
         photonView.RPC("RPC_SetPlayerReady", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber, ready);
     }
-
-    #endregion Public methods
-
-    #region Private methods
 
     [PunRPC]
     private void RPC_SetPlayerReady(int actorNum, bool ready)
@@ -80,7 +72,8 @@ public class TurnManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_RunTurn(bool run)
     {
-        runningTurnEvent.Raise(run);
+        MessageBus.RunningTurn.Broadcast(run);
+
         if (run)
         {
             StartCoroutine("WaitTurnEnd");
@@ -88,7 +81,7 @@ public class TurnManager : MonoBehaviourPunCallbacks
         else
         {
             currentTurn.Value++;
-            nextTurnEvent.Raise(currentTurn.Value);
+            MessageBus.NextTurn.Broadcast();
         }
     }
 
@@ -106,6 +99,12 @@ public class TurnManager : MonoBehaviourPunCallbacks
         }
 
         OnPlayerReady(true);
+    }
+
+    [PunRPC]
+    private void RPC_SetTurnNumber(int num)
+    {
+        currentTurn.Value = num;
     }
 
     #endregion Private methods
@@ -133,6 +132,14 @@ public class TurnManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.OfflineMode)
         {
             PhotonNetwork.CreateRoom("OfflineRoom");
+        }
+    }
+
+    public override void OnCreatedRoom()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("RPC_SetTurnNumber", RpcTarget.All, 1);
         }
     }
 

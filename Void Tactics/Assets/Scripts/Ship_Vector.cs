@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using Vdev.Messaging;
 
-[RequireComponent(typeof(Ship_Movement))]
+[RequireComponent(typeof(Ship_Movement)), RequireComponent(typeof(MessageAutoSubscriber))]
 public class Ship_Vector : MonoBehaviour
 {
     #region Private variables
@@ -24,6 +25,7 @@ public class Ship_Vector : MonoBehaviour
 
     #region Public methods
 
+    [MessageHandler(typeof(MessageBus.NextTurn))]
     public void OnTurnStart()
     {
         startPos = transform.position;
