@@ -24,9 +24,10 @@ GameObject:
   - component: {fileID: 114326007453772300}
   - component: {fileID: 114925854775167500}
   - component: {fileID: 114654966853179532}
+  - component: {fileID: 65131174636273156}
   m_Layer: 0
   m_Name: Ship
-  m_TagString: Untagged
+  m_TagString: Ship
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -292,6 +293,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1505606224782278}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &65131174636273156
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1022742788131350}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.45, y: 0.27, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114326007453772300
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -343,7 +356,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   viewIdField: 0
-  InstantiationId: 0
+  InstantiationId: 4
   isRuntimeInstantiated: 0
 --- !u!114 &114780832067201260
 MonoBehaviour:
