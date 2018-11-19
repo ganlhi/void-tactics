@@ -38,16 +38,13 @@ public class MouseManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (hoveredShip.Value == null)
-            {
-                selectedShip.Value = null;
-            }
-            else
+            if (hoveredShip.Value != null)
             {
                 var ship = hoveredShip.Value.GetComponent<Ship_Data>().Data;
                 if (ship.Owner == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
                     selectedShip.Value = hoveredShip.Value;
+                    MessageBus.SelectShip.Broadcast();
                 }
             }
         }

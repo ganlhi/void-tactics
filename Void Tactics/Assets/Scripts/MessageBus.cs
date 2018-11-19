@@ -10,4 +10,7 @@ public static class MessageBus
 
     public sealed class PlayerReady : Message<PlayerReady, bool>
     { }
+
+    public sealed class SelectShip : Message<SelectShip>
+    { }
 }

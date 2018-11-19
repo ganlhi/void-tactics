@@ -12,10 +12,12 @@ public class TurnManager : MonoBehaviourPunCallbacks
     #region Private variables
 
     private Dictionary<int, bool> playersReady = new Dictionary<int, bool>();
-    private bool isTurnRunning = false;
 
     [SerializeField]
     private IntVariable currentTurn;
+
+    [SerializeField]
+    private BoolVariable runningTurn;
 
     [SerializeField]
     private IntVariable turnDuration;
@@ -64,14 +66,14 @@ public class TurnManager : MonoBehaviourPunCallbacks
 
         if (playersReady.Values.All(ready => ready))
         {
-            isTurnRunning = !isTurnRunning;
-            photonView.RPC("RPC_RunTurn", RpcTarget.All, isTurnRunning);
+            photonView.RPC("RPC_RunTurn", RpcTarget.All, !runningTurn.Value);
         }
     }
 
     [PunRPC]
     private void RPC_RunTurn(bool run)
     {
+        runningTurn.Value = run;
         MessageBus.RunningTurn.Broadcast(run);
 
         if (run)
