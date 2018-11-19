@@ -32,7 +32,9 @@ public class Ship_Movement : MonoBehaviour
     public int Thrust;
     public Vector3 Velocity;
     public Vector3 FutureVelocity;
-    public Quaternion PlannedRotation;
+    public float PlottedPitch;
+    public float PlottedYaw;
+    public float PlottedRoll;
 
     #endregion Public variables
 
@@ -42,9 +44,10 @@ public class Ship_Movement : MonoBehaviour
     public void OnTurnStart()
     {
         Thrust = 0;
-        PlannedRotation = Quaternion.identity;
+        PlottedPitch = 0;
+        PlottedYaw = 0;
+        PlottedRoll = 0;
         applyPlotting = true;
-
         marker.transform.position = transform.position + Velocity;
         marker.transform.rotation = transform.rotation;
         marker.SetActive(true);
@@ -118,10 +121,15 @@ public class Ship_Movement : MonoBehaviour
     {
         if (applyPlotting)
         {
-            var midMoveRot = Quaternion.Slerp(Quaternion.identity, PlannedRotation, .5f);
+            var plannedRotation = Quaternion.identity
+                * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
+                * Quaternion.AngleAxis(PlottedPitch, Vector3.left)
+                * Quaternion.AngleAxis(PlottedRoll, Vector3.back);
+
+            var midMoveRot = Quaternion.Slerp(Quaternion.identity, plannedRotation, .5f);
             thrustVector = (midMoveRot * transform.forward).normalized * Thrust;
             FutureVelocity = Velocity + thrustVector;
-            marker.transform.rotation = transform.rotation * PlannedRotation;
+            marker.transform.rotation = transform.rotation * plannedRotation;
         }
     }
 
