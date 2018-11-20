@@ -13,4 +13,10 @@ public static class MessageBus
 
     public sealed class SelectShip : Message<SelectShip>
     { }
+
+    public sealed class Plot : Message<Plot, ManeuverAxis, int>
+    { }
+
+    public sealed class PlotThrust : Message<PlotThrust, float>
+    { }
 }

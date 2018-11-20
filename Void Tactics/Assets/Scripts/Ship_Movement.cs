@@ -12,6 +12,9 @@ public class Ship_Movement : MonoBehaviour
     private Vector3 thrustVector;
 
     [SerializeField]
+    private GameObjectVariable selectedShip;
+
+    [SerializeField]
     private IntVariable turnDuration;
 
     [SerializeField]
@@ -29,19 +32,19 @@ public class Ship_Movement : MonoBehaviour
 
     #region Public variables
 
-    public int Thrust;
+    public float Thrust;
     public Vector3 Velocity;
     public Vector3 FutureVelocity;
-    public float PlottedPitch;
-    public float PlottedYaw;
-    public float PlottedRoll;
+    public int PlottedPitch;
+    public int PlottedYaw;
+    public int PlottedRoll;
 
     #endregion Public variables
 
-    #region Public Methods
+    #region Private methods
 
     [MessageHandler(typeof(MessageBus.NextTurn))]
-    public void OnTurnStart()
+    private void OnTurnStart()
     {
         Thrust = 0;
         PlottedPitch = 0;
@@ -54,9 +57,8 @@ public class Ship_Movement : MonoBehaviour
     }
 
     [MessageHandler(typeof(MessageBus.RunningTurn))]
-    public void OnTurnRunning(bool running)
+    private void OnTurnRunning(bool running)
     {
-        Debug.Log("SHIP: " + gameObject.name);
         applyPlotting = false;
 
         if (running)
@@ -69,9 +71,36 @@ public class Ship_Movement : MonoBehaviour
         }
     }
 
-    #endregion Public Methods
+    [MessageHandler(typeof(MessageBus.Plot))]
+    private void OnPlot(ManeuverAxis axis, int amount)
+    {
+        if (selectedShip.Value == gameObject)
+        {
+            switch (axis)
+            {
+                case ManeuverAxis.Pitch:
+                    PlottedPitch = amount;
+                    break;
 
-    #region Private methods
+                case ManeuverAxis.Yaw:
+                    PlottedYaw = amount;
+                    break;
+
+                case ManeuverAxis.Roll:
+                    PlottedRoll = amount;
+                    break;
+            }
+        }
+    }
+
+    [MessageHandler(typeof(MessageBus.PlotThrust))]
+    private void OnPlotThrust(float thrust)
+    {
+        if (selectedShip.Value == gameObject)
+        {
+            Thrust = thrust;
+        }
+    }
 
     private IEnumerator MakeMove()
     {
@@ -121,14 +150,19 @@ public class Ship_Movement : MonoBehaviour
     {
         if (applyPlotting)
         {
-            var plannedRotation = Quaternion.identity
-                * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
-                * Quaternion.AngleAxis(PlottedPitch, Vector3.left)
-                * Quaternion.AngleAxis(PlottedRoll, Vector3.back);
+            var midMoveRot = Quaternion.identity
+                * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
+                * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
+                * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
 
-            var midMoveRot = Quaternion.Slerp(Quaternion.identity, plannedRotation, .5f);
             thrustVector = (midMoveRot * transform.forward).normalized * Thrust;
             FutureVelocity = Velocity + thrustVector;
+
+            var plannedRotation = Quaternion.identity
+                * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
+                * Quaternion.AngleAxis(PlottedPitch, -Vector3.right)
+                * Quaternion.AngleAxis(PlottedRoll, -Vector3.forward);
+
             marker.transform.rotation = transform.rotation * plannedRotation;
         }
     }
@@ -137,6 +171,21 @@ public class Ship_Movement : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, transform.position + thrustVector);
+
+        var pos = transform.position + 0.5f * Velocity;
+        var midMoveRot = Quaternion.identity
+                * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
+                * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
+                * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
+
+        var fwd = (midMoveRot * transform.forward).normalized;
+        var up = (midMoveRot * transform.up).normalized;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(pos, pos + fwd);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(pos, pos + up);
     }
 
     #endregion Unity callbacks

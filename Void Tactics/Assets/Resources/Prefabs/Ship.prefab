@@ -381,9 +381,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d44a9a72d1b84e44abf9f41bd5a3d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedShip: {fileID: 11400000, guid: 2696719e7233d014c9e2a9e0ea3879a4, type: 2}
   turnDuration: {fileID: 11400000, guid: 57228cca96af35645a37a1ee856069af, type: 2}
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   Thrust: 0
   Velocity: {x: 0, y: 0, z: 0}
   FutureVelocity: {x: 0, y: 0, z: 0}
-  PlannedRotation: {x: 0, y: 0, z: 0, w: 0}
+  PlottedPitch: 0
+  PlottedYaw: 0
+  PlottedRoll: 0
