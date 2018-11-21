@@ -1,5 +1,4 @@
 ﻿using Photon.Pun;
-using System.Linq;
 using UnityEngine;
 
 public class MouseManager : MonoBehaviour
@@ -25,16 +24,6 @@ public class MouseManager : MonoBehaviour
     #endregion Private methods
 
     #region Unity callbacks
-
-    private void Start()
-    {
-        // At start, select first player's ship
-        var playerShip = PhotonNetwork.FindGameObjectsWithComponent(typeof(Ship_Data))
-            .Where(go => go.GetComponent<Ship_Data>().Data.Owner == PhotonNetwork.LocalPlayer.ActorNumber)
-            .FirstOrDefault();
-
-        SelectShip(playerShip);
-    }
 
     private void Update()
     {
