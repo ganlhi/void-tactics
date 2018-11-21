@@ -25,7 +25,7 @@ public class Ship_Vector : MonoBehaviour
 
     #region Public methods
 
-    [MessageHandler(typeof(MessageBus.NextTurn))]
+    //[MessageHandler(typeof(MessageBus.NextTurn))]
     public void OnTurnStart()
     {
         startPos = transform.position;

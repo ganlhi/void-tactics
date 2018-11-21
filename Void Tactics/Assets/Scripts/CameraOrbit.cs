@@ -37,10 +37,20 @@ public class CameraOrbit : MonoBehaviour
 
     private void PlaceCamera()
     {
+        var wheel = Input.GetAxis("Mouse ScrollWheel");
+        if (wheel != 0)
+        {
+            distance = Mathf.Max(distance - zoomSpeed * wheel, 1.5f);
+        }
+
         if (target != null)
         {
-            input += new Vector2(Input.GetAxis("Mouse X") * speed, Input.GetAxis("Mouse Y") * speed);
-            transform.localRotation = Quaternion.Euler(-input.y, input.x, 0);
+            if (Input.GetMouseButton(2))
+            {
+                input += new Vector2(Input.GetAxis("Mouse X") * speed, Input.GetAxis("Mouse Y") * speed);
+                transform.localRotation = Quaternion.Euler(-input.y, input.x, 0);
+            }
+
             transform.localPosition = target.position - (transform.localRotation * Vector3.forward * distance);
         }
     }
@@ -56,13 +66,7 @@ public class CameraOrbit : MonoBehaviour
 
     private void Update()
     {
-        var wheel = Input.GetAxis("Mouse ScrollWheel");
-        distance = Mathf.Max(distance - zoomSpeed * wheel, 1.5f);
-
-        if (Input.GetMouseButton(2) || wheel != 0)
-        {
-            PlaceCamera();
-        }
+        PlaceCamera();
     }
 
     #endregion Unity callbacks

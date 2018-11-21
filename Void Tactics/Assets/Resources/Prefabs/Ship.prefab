@@ -383,6 +383,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedShip: {fileID: 11400000, guid: 2696719e7233d014c9e2a9e0ea3879a4, type: 2}
   turnDuration: {fileID: 11400000, guid: 57228cca96af35645a37a1ee856069af, type: 2}
+  metersPerUnit: {fileID: 11400000, guid: 5694335c1aa5f8843a6a9264c5751483, type: 2}
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   Thrust: 0
   Velocity: {x: 0, y: 0, z: 0}

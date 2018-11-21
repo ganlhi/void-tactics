@@ -1428,7 +1428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90b1c793c30f6f44eafdf3fa0adc922d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedShip: {fileID: 0}
+  selectedShip: {fileID: 11400000, guid: 2696719e7233d014c9e2a9e0ea3879a4, type: 2}
   speed: 8
   zoomSpeed: 8
   distance: 5

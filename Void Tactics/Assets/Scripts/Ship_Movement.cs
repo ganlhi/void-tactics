@@ -7,15 +7,18 @@ public class Ship_Movement : MonoBehaviour
 {
     #region Private variables
 
-    private bool applyPlotting;
     private GameObject marker;
-    private Vector3 thrustVector;
+    private Vector3[] trajectory;
+    private Quaternion[] attitudes;
 
     [SerializeField]
     private GameObjectVariable selectedShip;
 
     [SerializeField]
     private IntVariable turnDuration;
+
+    [SerializeField]
+    private IntVariable metersPerUnit;
 
     [SerializeField]
     private IntVariable speedFactor;
@@ -50,17 +53,15 @@ public class Ship_Movement : MonoBehaviour
         PlottedPitch = 0;
         PlottedYaw = 0;
         PlottedRoll = 0;
-        applyPlotting = true;
-        marker.transform.position = transform.position + Velocity;
-        marker.transform.rotation = transform.rotation;
+        //marker.transform.position = transform.position + Velocity;
+        //marker.transform.rotation = transform.rotation;
         marker.SetActive(true);
+        ComputeTrajectory();
     }
 
     [MessageHandler(typeof(MessageBus.RunningTurn))]
     private void OnTurnRunning(bool running)
     {
-        applyPlotting = false;
-
         if (running)
         {
             StartCoroutine(MakeMove());
@@ -90,6 +91,8 @@ public class Ship_Movement : MonoBehaviour
                     PlottedRoll = amount;
                     break;
             }
+
+            ComputeTrajectory();
         }
     }
 
@@ -99,16 +102,15 @@ public class Ship_Movement : MonoBehaviour
         if (selectedShip.Value == gameObject)
         {
             Thrust = thrust;
+
+            ComputeTrajectory();
         }
     }
 
     private IEnumerator MakeMove()
     {
         var startPos = transform.position;
-        var toPos = marker.transform.position;
-
         var startRot = transform.rotation;
-        var toRot = marker.transform.rotation;
 
         var duration = currentTurnDuration;
         var elapsedTime = 0f;
@@ -116,8 +118,21 @@ public class Ship_Movement : MonoBehaviour
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            transform.position = Vector3.Lerp(startPos, toPos, elapsedTime / duration);
-            transform.rotation = Quaternion.Slerp(startRot, toRot, elapsedTime / duration);
+            var progress = elapsedTime / duration;
+
+            var i = Mathf.Max(0, Mathf.CeilToInt(progress * turnDuration) - 1);
+            var toPos = i >= trajectory.Length ? marker.transform.position : trajectory[i];
+            var toRot = i >= attitudes.Length ? marker.transform.rotation : attitudes[i];
+            if (i > 0)
+            {
+                startPos = trajectory[i - 1];
+                startRot = attitudes[i - 1];
+            }
+
+            var progressBetweenPos = progress * turnDuration - i;
+
+            transform.position = Vector3.Lerp(startPos, toPos, progressBetweenPos);
+            transform.rotation = Quaternion.Slerp(startRot, toRot, progressBetweenPos);
             yield return null;
         }
 
@@ -136,6 +151,39 @@ public class Ship_Movement : MonoBehaviour
         }
     }
 
+    private void ComputeTrajectory()
+    {
+        var pos = transform.position;
+        var rot = transform.rotation;
+        var v = Velocity;
+        var a_mag = Thrust * 9.81f;
+
+        trajectory = new Vector3[turnDuration];
+        attitudes = new Quaternion[turnDuration];
+
+        for (var i = 0; i < turnDuration; i++)
+        {
+            pos += v;
+            trajectory[i] = pos;
+
+            rot *= Quaternion.Euler(
+                -1f * PlottedPitch / turnDuration,
+                1f * PlottedYaw / turnDuration,
+                -1f * PlottedRoll / turnDuration);
+
+            attitudes[i] = rot;
+
+            var a = rot * Vector3.forward * a_mag / metersPerUnit;
+            v += a;
+        }
+
+        marker.transform.position = pos;
+        marker.transform.rotation = rot;
+        FutureVelocity = v;
+        Debug.Log("Velocity: " + v.magnitude);
+        Debug.Log("Distance: " + Vector3.Distance(transform.position, pos));
+    }
+
     #endregion Private methods
 
     #region Unity callbacks
@@ -148,44 +196,53 @@ public class Ship_Movement : MonoBehaviour
 
     private void Update()
     {
-        if (applyPlotting)
-        {
-            var midMoveRot = Quaternion.identity
-                * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
-                * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
-                * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
+        //if (applyPlotting)
+        //{
+        //    var midMoveRot = Quaternion.identity
+        //        * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
+        //        * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
+        //        * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
 
-            thrustVector = (midMoveRot * transform.forward).normalized * Thrust;
-            FutureVelocity = Velocity + thrustVector;
+        //    thrustVector = (midMoveRot * transform.forward).normalized * Thrust;
+        //    FutureVelocity = Velocity + thrustVector;
 
-            var plannedRotation = Quaternion.identity
-                * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
-                * Quaternion.AngleAxis(PlottedPitch, -Vector3.right)
-                * Quaternion.AngleAxis(PlottedRoll, -Vector3.forward);
+        //    var plannedRotation = Quaternion.identity
+        //        * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
+        //        * Quaternion.AngleAxis(PlottedPitch, -Vector3.right)
+        //        * Quaternion.AngleAxis(PlottedRoll, -Vector3.forward);
 
-            marker.transform.rotation = transform.rotation * plannedRotation;
-        }
+        //    marker.transform.rotation = transform.rotation * plannedRotation;
+        //}
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, transform.position + thrustVector);
+        //Gizmos.color = Color.cyan;
+        //Gizmos.DrawLine(transform.position, transform.position + thrustVector);
 
-        var pos = transform.position + 0.5f * Velocity;
-        var midMoveRot = Quaternion.identity
-                * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
-                * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
-                * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
+        //var pos = transform.position + 0.5f * Velocity;
+        //var midMoveRot = Quaternion.identity
+        //        * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
+        //        * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
+        //        * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
+        if (Application.isPlaying)
+        {
+            for (var i = 0; i < turnDuration; i++)
+            {
+                var fwd = (attitudes[i] * Vector3.forward).normalized;
+                var up = (attitudes[i] * Vector3.up).normalized;
+                var pos = trajectory[i];
 
-        var fwd = (midMoveRot * transform.forward).normalized;
-        var up = (midMoveRot * transform.up).normalized;
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(pos, pos + fwd);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(pos, pos + fwd);
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(pos, pos + up);
+            }
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(pos, pos + up);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(marker.transform.position, marker.transform.position + FutureVelocity * turnDuration);
+        }
     }
 
     #endregion Unity callbacks
