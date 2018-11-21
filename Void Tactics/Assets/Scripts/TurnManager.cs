@@ -25,6 +25,9 @@ public class TurnManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private IntVariable speedFactor;
 
+    [SerializeField]
+    private GameObjectVariable selectedShip;
+
     private int currentTurnDuration
     {
         get
@@ -147,10 +150,22 @@ public class TurnManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("Player in room: " + PhotonNetwork.LocalPlayer.ActorNumber);
+        var actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.Log("Player in room: " + actorNumber);
         if (PhotonNetwork.IsMasterClient)
         {
-            playersReady.Add(PhotonNetwork.LocalPlayer.ActorNumber, false);
+            playersReady.Add(actorNumber, false);
+        }
+
+        // At start, select first player's ship
+        var playerShip = PhotonNetwork.FindGameObjectsWithComponent(typeof(Ship_Data))
+            .Where(go => go.GetComponent<Ship_Data>().Data.Owner == actorNumber)
+            .FirstOrDefault();
+
+        if (playerShip != null)
+        {
+            selectedShip.Value = playerShip;
+            MessageBus.SelectShip.Broadcast();
         }
     }
 
