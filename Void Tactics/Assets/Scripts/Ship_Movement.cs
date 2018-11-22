@@ -8,8 +8,6 @@ public class Ship_Movement : MonoBehaviour
     #region Private variables
 
     private GameObject marker;
-    private Vector3[] trajectory;
-    private Quaternion[] attitudes;
 
     [SerializeField]
     private GameObjectVariable selectedShip;
@@ -41,6 +39,8 @@ public class Ship_Movement : MonoBehaviour
     public int PlottedPitch;
     public int PlottedYaw;
     public int PlottedRoll;
+    public Vector3[] Trajectory { get; private set; }
+    public Quaternion[] Attitudes { get; private set; }
 
     #endregion Public variables
 
@@ -120,13 +120,13 @@ public class Ship_Movement : MonoBehaviour
             elapsedTime += Time.deltaTime;
             var progress = elapsedTime / duration;
 
-            var i = Mathf.Max(0, Mathf.CeilToInt(progress * turnDuration) - 1);
-            var toPos = i >= trajectory.Length ? marker.transform.position : trajectory[i];
-            var toRot = i >= attitudes.Length ? marker.transform.rotation : attitudes[i];
+            var i = Mathf.Min(turnDuration - 1, Mathf.Max(0, Mathf.CeilToInt(progress * turnDuration) - 1));
+            var toPos = Trajectory[i];
+            var toRot = Attitudes[i];
             if (i > 0)
             {
-                startPos = trajectory[i - 1];
-                startRot = attitudes[i - 1];
+                startPos = Trajectory[i - 1];
+                startRot = Attitudes[i - 1];
             }
 
             var progressBetweenPos = progress * turnDuration - i;
@@ -158,20 +158,20 @@ public class Ship_Movement : MonoBehaviour
         var v = Velocity;
         var a_mag = Thrust * 9.81f;
 
-        trajectory = new Vector3[turnDuration];
-        attitudes = new Quaternion[turnDuration];
+        Trajectory = new Vector3[turnDuration];
+        Attitudes = new Quaternion[turnDuration];
 
         for (var i = 0; i < turnDuration; i++)
         {
             pos += v;
-            trajectory[i] = pos;
+            Trajectory[i] = pos;
 
             rot *= Quaternion.Euler(
                 -1f * PlottedPitch / turnDuration,
                 1f * PlottedYaw / turnDuration,
                 -1f * PlottedRoll / turnDuration);
 
-            attitudes[i] = rot;
+            Attitudes[i] = rot;
 
             var a = rot * Vector3.forward * a_mag / metersPerUnit;
             v += a;
@@ -229,9 +229,9 @@ public class Ship_Movement : MonoBehaviour
         {
             for (var i = 0; i < turnDuration; i++)
             {
-                var fwd = (attitudes[i] * Vector3.forward).normalized;
-                var up = (attitudes[i] * Vector3.up).normalized;
-                var pos = trajectory[i];
+                var fwd = (Attitudes[i] * Vector3.forward).normalized;
+                var up = (Attitudes[i] * Vector3.up).normalized;
+                var pos = Trajectory[i];
 
                 Gizmos.color = Color.blue;
                 Gizmos.DrawLine(pos, pos + fwd);

@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using Vdev.Messaging;
 
-[RequireComponent(typeof(Ship_Movement)), RequireComponent(typeof(MessageAutoSubscriber))]
+[RequireComponent(typeof(Ship_Movement))]
 public class Ship_Vector : MonoBehaviour
 {
     #region Private variables
 
-    private Vector3 startPos;
-    private Vector3 endPos;
     private Ship_Movement movement;
     private LineRenderer lineRenderer;
     private LineRenderer lineRendererFuture;
+    private Vector3 startPos;
 
     [SerializeField]
     private Material material;
@@ -23,23 +22,6 @@ public class Ship_Vector : MonoBehaviour
 
     #endregion Private variables
 
-    #region Public methods
-
-    //[MessageHandler(typeof(MessageBus.NextTurn))]
-    public void OnTurnStart()
-    {
-        startPos = transform.position;
-        endPos = startPos + movement.Velocity;
-
-        lineRenderer.SetPosition(0, startPos);
-        lineRenderer.SetPosition(1, endPos);
-
-        lineRendererFuture.SetPosition(0, endPos);
-        lineRendererFuture.SetPosition(1, endPos + movement.FutureVelocity);
-    }
-
-    #endregion Public methods
-
     #region Private methods
 
     private LineRenderer CreateRenderer(bool isFuture)
@@ -49,10 +31,16 @@ public class Ship_Vector : MonoBehaviour
 
         var lr = lineWrapper.AddComponent<LineRenderer>();
         lr.material = isFuture ? materialFuture : material;
-        lr.positionCount = 2;
+        lr.positionCount = isFuture ? 2 : movement.Trajectory.Length + 1;
         lr.widthMultiplier = lineWidth;
 
         return lr;
+    }
+
+    [MessageHandler(typeof(MessageBus.NextTurn))]
+    public void OnTurnStart()
+    {
+        startPos = transform.position;
     }
 
     #endregion Private methods
@@ -64,13 +52,21 @@ public class Ship_Vector : MonoBehaviour
         movement = GetComponent<Ship_Movement>();
         lineRenderer = CreateRenderer(false);
         lineRendererFuture = CreateRenderer(true);
-
         OnTurnStart();
     }
 
     private void Update()
     {
-        lineRendererFuture.SetPosition(1, endPos + movement.FutureVelocity);
+        var nb = movement.Trajectory.Length;
+
+        lineRenderer.SetPosition(0, startPos);
+        for (var i = 0; i < nb; i++)
+        {
+            lineRenderer.SetPosition(i + 1, movement.Trajectory[i]);
+        }
+
+        lineRendererFuture.SetPosition(0, movement.Trajectory[nb - 1]);
+        lineRendererFuture.SetPosition(1, movement.Trajectory[nb - 1] + movement.FutureVelocity * nb);
     }
 
     #endregion Unity callbacks
