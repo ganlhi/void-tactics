@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114326007453772300}
   - component: {fileID: 114925854775167500}
   - component: {fileID: 114654966853179532}
+  - component: {fileID: 114839492037387242}
   - component: {fileID: 65131174636273156}
   m_Layer: 0
   m_Name: Ship
@@ -370,6 +371,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AutoSubscription: 1
+--- !u!114 &114839492037387242
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1022742788131350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b1e102f5a3ff246b27000858bbe3f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  markerPosIndex: {fileID: 11400000, guid: 5c0bfe378bd42794fb78a56ce6239335, type: 2}
 --- !u!114 &114925854775167500
 MonoBehaviour:
   m_ObjectHideFlags: 1

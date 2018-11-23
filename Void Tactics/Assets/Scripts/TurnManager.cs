@@ -43,7 +43,6 @@ public class TurnManager : MonoBehaviourPunCallbacks
     [MessageHandler(typeof(MessageBus.PlayerReady))]
     private void OnPlayerReady(bool ready)
     {
-        Debug.Log("Local Player Ready: " + ready);
         photonView.RPC("RPC_SetPlayerReady", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber, ready);
     }
 
@@ -55,7 +54,6 @@ public class TurnManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        Debug.LogFormat("Player {0} Ready: {1}", actorNum, ready);
         playersReady[actorNum] = ready;
         CheckPlayersReady();
     }

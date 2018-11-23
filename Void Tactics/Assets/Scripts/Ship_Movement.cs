@@ -7,8 +7,6 @@ public class Ship_Movement : MonoBehaviour
 {
     #region Private variables
 
-    private GameObject marker;
-
     [SerializeField]
     private GameObjectVariable selectedShip;
 
@@ -53,9 +51,6 @@ public class Ship_Movement : MonoBehaviour
         PlottedPitch = 0;
         PlottedYaw = 0;
         PlottedRoll = 0;
-        //marker.transform.position = transform.position + Velocity;
-        //marker.transform.rotation = transform.rotation;
-        marker.SetActive(true);
         ComputeTrajectory();
     }
 
@@ -135,20 +130,6 @@ public class Ship_Movement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(startRot, toRot, progressBetweenPos);
             yield return null;
         }
-
-        marker.SetActive(false);
-    }
-
-    private void CreateMarker()
-    {
-        marker = new GameObject(gameObject.name + " [M]");
-
-        var model = Instantiate(transform.Find("Model"), marker.transform);
-        model.transform.localScale = new Vector3(.8f, .8f, .8f);
-        foreach (var mr in model.GetComponentsInChildren<MeshRenderer>())
-        {
-            mr.material.color = new Color(.5f, .5f, .5f, .5f);
-        }
     }
 
     private void ComputeTrajectory()
@@ -177,11 +158,7 @@ public class Ship_Movement : MonoBehaviour
             v += a;
         }
 
-        marker.transform.position = pos;
-        marker.transform.rotation = rot;
         FutureVelocity = v;
-        Debug.Log("Velocity: " + v.magnitude);
-        Debug.Log("Distance: " + Vector3.Distance(transform.position, pos));
     }
 
     #endregion Private methods
@@ -190,41 +167,11 @@ public class Ship_Movement : MonoBehaviour
 
     private void Awake()
     {
-        CreateMarker();
         OnTurnStart();
-    }
-
-    private void Update()
-    {
-        //if (applyPlotting)
-        //{
-        //    var midMoveRot = Quaternion.identity
-        //        * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
-        //        * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
-        //        * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
-
-        //    thrustVector = (midMoveRot * transform.forward).normalized * Thrust;
-        //    FutureVelocity = Velocity + thrustVector;
-
-        //    var plannedRotation = Quaternion.identity
-        //        * Quaternion.AngleAxis(PlottedYaw, Vector3.up)
-        //        * Quaternion.AngleAxis(PlottedPitch, -Vector3.right)
-        //        * Quaternion.AngleAxis(PlottedRoll, -Vector3.forward);
-
-        //    marker.transform.rotation = transform.rotation * plannedRotation;
-        //}
     }
 
     private void OnDrawGizmos()
     {
-        //Gizmos.color = Color.cyan;
-        //Gizmos.DrawLine(transform.position, transform.position + thrustVector);
-
-        //var pos = transform.position + 0.5f * Velocity;
-        //var midMoveRot = Quaternion.identity
-        //        * Quaternion.AngleAxis(0.5f * PlottedYaw, transform.up)
-        //        * Quaternion.AngleAxis(0.5f * PlottedPitch, -transform.right)
-        //        * Quaternion.AngleAxis(0.5f * PlottedRoll, -transform.forward);
         if (Application.isPlaying)
         {
             for (var i = 0; i < turnDuration; i++)
@@ -239,9 +186,6 @@ public class Ship_Movement : MonoBehaviour
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(pos, pos + up);
             }
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(marker.transform.position, marker.transform.position + FutureVelocity * turnDuration);
         }
     }
 
