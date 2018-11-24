@@ -578,7 +578,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -614,7 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -632,7 +632,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -650,7 +650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -727,7 +727,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -766,7 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
@@ -784,7 +784,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   range: 15
-  trackAngle: 10
+  trackAngle: 15
   shotDuration: 2
   speedFactor: {fileID: 11400000, guid: dfaaa5083d89ebc41bbeb7109529bf5d, type: 2}
   material: {fileID: 2100000, guid: afbf2bda715c4e64880f482e02c3d761, type: 2}
