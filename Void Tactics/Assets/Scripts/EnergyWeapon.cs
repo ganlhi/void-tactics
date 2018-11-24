@@ -32,6 +32,7 @@ public class EnergyWeapon : MonoBehaviour
 
     private Coroutine trackingCoroutine;
     private LineRenderer lineRenderer;
+    private float lastShotRatio;
 
     #endregion Private variables
 
@@ -50,6 +51,8 @@ public class EnergyWeapon : MonoBehaviour
         {
             StopCoroutine(trackingCoroutine);
         }
+
+        Debug.LogFormat("SHOT RATIO {0}", lastShotRatio);
     }
 
     #endregion Public methods
@@ -104,6 +107,8 @@ public class EnergyWeapon : MonoBehaviour
         while (elapsedTime <= duration)
         {
             elapsedTime += Time.deltaTime;
+            lastShotRatio = elapsedTime / shotDuration;
+
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, validTarget.transform.position);
 
@@ -120,9 +125,6 @@ public class EnergyWeapon : MonoBehaviour
         }
 
         lineRenderer.enabled = false;
-
-        var shotRatio = elapsedTime / shotDuration;
-        Debug.LogFormat("SHOT RATIO {0}", shotRatio);
     }
 
     #endregion Private methods
