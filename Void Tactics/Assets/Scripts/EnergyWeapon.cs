@@ -6,7 +6,7 @@ public class EnergyWeapon : MonoBehaviour
 {
     #region Public variables
 
-    public List<GameObject> Targets;
+    public List<GameObject> Targets = new List<GameObject>();
 
     #endregion Public variables
 

@@ -21,6 +21,7 @@ public class Ship_Marker : MonoBehaviour
     private void CreateMarker()
     {
         marker = new GameObject(gameObject.name + " [M]");
+        marker.tag = "Marker";
 
         var model = Instantiate(transform.Find("Model"), marker.transform);
         model.transform.localScale = new Vector3(.8f, .8f, .8f);
@@ -28,6 +29,11 @@ public class Ship_Marker : MonoBehaviour
         {
             mr.material.color = new Color(.5f, .5f, .5f, .5f);
         }
+
+        var bc = marker.AddComponent<BoxCollider>();
+        var parentBC = gameObject.GetComponent<BoxCollider>();
+        bc.center = parentBC.center;
+        bc.size = parentBC.size * .8f;
     }
 
     #endregion Private methods

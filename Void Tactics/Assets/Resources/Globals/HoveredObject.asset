@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edc690a6e84028a488f0c8e94cbc98bd, type: 3}
-  m_Name: HoveredShip
+  m_Name: HoveredObject
   m_EditorClassIdentifier: 
   DeveloperDescription:
     _value: 

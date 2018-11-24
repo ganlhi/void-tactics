@@ -19,7 +19,7 @@ public class CameraOrbit : MonoBehaviour
     private float distance = 5f;
 
     [SerializeField]
-    private Transform target;
+    public Transform Target;
 
     #endregion Settings
 
@@ -27,11 +27,11 @@ public class CameraOrbit : MonoBehaviour
 
     private Vector2 input;
 
-    [MessageHandler(typeof(MessageBus.SelectShip))]
+    [MessageHandler(typeof(MessageBus.SelectShip), AllowPartialParameters = true)]
     private void OnSelectShip()
     {
         //TODO fly to new target
-        target = selectedShip.Value == null ? null : selectedShip.Value.transform;
+        Target = selectedShip.Value == null ? null : selectedShip.Value.transform;
         PlaceCamera();
     }
 
@@ -41,17 +41,19 @@ public class CameraOrbit : MonoBehaviour
         if (wheel != 0)
         {
             distance = Mathf.Max(distance - zoomSpeed * wheel, 1.5f);
+            MessageBus.RadialMenu.Broadcast(null);
         }
 
-        if (target != null)
+        if (Target != null)
         {
             if (Input.GetMouseButton(2))
             {
                 input += new Vector2(Input.GetAxis("Mouse X") * speed, Input.GetAxis("Mouse Y") * speed);
                 transform.localRotation = Quaternion.Euler(-input.y, input.x, 0);
+                MessageBus.RadialMenu.Broadcast(null);
             }
 
-            transform.localPosition = target.position - (transform.localRotation * Vector3.forward * distance);
+            transform.localPosition = Target.position - (transform.localRotation * Vector3.forward * distance);
         }
     }
 

@@ -26,7 +26,7 @@ public class Command_Plotting : MonoBehaviour
     #region Private methods
 
     [MessageHandler(typeof(MessageBus.NextTurn))]
-    [MessageHandler(typeof(MessageBus.SelectShip))]
+    [MessageHandler(typeof(MessageBus.SelectShip), AllowPartialParameters = true)]
     private void SetValues()
     {
         if (selectedShip.Value == null)

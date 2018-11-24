@@ -163,7 +163,7 @@ public class TurnManager : MonoBehaviourPunCallbacks
         if (playerShip != null)
         {
             selectedShip.Value = playerShip;
-            MessageBus.SelectShip.Broadcast();
+            MessageBus.SelectShip.Broadcast(playerShip);
         }
     }
 

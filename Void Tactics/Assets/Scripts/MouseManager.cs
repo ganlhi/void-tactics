@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseManager : MonoBehaviour
@@ -9,7 +10,10 @@ public class MouseManager : MonoBehaviour
     private GameObjectVariable selectedShip;
 
     [SerializeField]
-    private GameObjectVariable hoveredShip;
+    private GameObjectVariable hoveredObject;
+
+    [SerializeField]
+    private List<string> allowedTags;
 
     #endregion Editor customization
 
@@ -18,7 +22,7 @@ public class MouseManager : MonoBehaviour
     private void SelectShip(GameObject ship)
     {
         selectedShip.Value = ship;
-        MessageBus.SelectShip.Broadcast();
+        MessageBus.SelectShip.Broadcast(ship);
     }
 
     #endregion Private methods
@@ -30,28 +34,33 @@ public class MouseManager : MonoBehaviour
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        hoveredShip.Value = null;
+        hoveredObject.Value = null;
 
         if (Physics.Raycast(ray, out hit))
         {
             var go = hit.transform.gameObject;
 
-            if (go.tag == "Ship")
+            if (allowedTags.Contains(go.tag))
             {
-                hoveredShip.Value = go;
+                hoveredObject.Value = go;
             }
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (hoveredShip.Value != null)
+            if (hoveredObject.Value != null)
             {
-                var ship = hoveredShip.Value.GetComponent<Ship_Data>().Data;
-                if (ship.Owner == PhotonNetwork.LocalPlayer.ActorNumber)
+                var ship = hoveredObject.Value.GetComponent<Ship_Data>().Data;
+                if (ship != null && ship.Owner == PhotonNetwork.LocalPlayer.ActorNumber)
                 {
-                    SelectShip(hoveredShip.Value);
+                    SelectShip(hoveredObject.Value);
                 }
             }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            MessageBus.RadialMenu.Broadcast(hoveredObject.Value);
         }
     }
 

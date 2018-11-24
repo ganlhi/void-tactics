@@ -16,7 +16,7 @@ public class Command_Visibility : MonoBehaviour
 
     #region Private methods
 
-    [MessageHandler(typeof(MessageBus.SelectShip))]
+    [MessageHandler(typeof(MessageBus.SelectShip), AllowPartialParameters = true)]
     [MessageHandler(typeof(MessageBus.RunningTurn), AllowPartialParameters = true)]
     public void UpdateVisibility()
     {
